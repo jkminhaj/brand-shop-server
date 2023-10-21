@@ -33,68 +33,75 @@ async function run() {
         const productCollection = database.collection('products')
         const cartCollection = database.collection('cart')
 
-       
+
         // All Brand Api 
-        app.get('/brand',async(req,res)=>{
+        app.get('/brand', async (req, res) => {
             const result = await brandCollection.find().toArray();
             res.send(result);
         })
-        
+
         // All Product Api
-        app.get('/product',async(req,res)=>{
+        app.get('/product', async (req, res) => {
             const result = await productCollection.find().toArray()
             res.send(result);
         })
 
         // Get api by product brand name
-        app.get('/product/:brandname',async(req,res)=>{
+        app.get('/product/:brandname', async (req, res) => {
             const brandName = req.params.brandname;
-            const query = { brand_name :brandName}
+            const query = { brand_name: brandName }
             const cursor = await productCollection.find(query).toArray();
             res.send(cursor)
         })
         // Get api by product id
-        app.get('/productid/:id',async(req,res)=>{
+        app.get('/productid/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id :new ObjectId(id)};
+            const query = { _id: new ObjectId(id) };
             const cursor = await productCollection.find(query).toArray();
             res.send(cursor)
         })
 
         // Add product api
-        app.post('/product', async(req,res)=>{
-            const product = req.body 
+        app.post('/product', async (req, res) => {
+            const product = req.body
             const result = await productCollection.insertOne(product)
             res.send(result)
         })
 
         // Update product api
-        app.put('/productid/:id',async(req,res)=>{
+        app.put('/productid/:id', async (req, res) => {
             const id = req.params.id
             const updatedProduct = req.body
             const updateDoc = {
-                $set:{
-                    name:updatedProduct.name,
-                    brand_name:updatedProduct.brand_name,
-                    img:updatedProduct.img,
-                    type:updatedProduct.type,
-                    price:updatedProduct.price,
-                    short_description:updatedProduct.short_description,
-                    rating_value:updatedProduct.rating_value,
+                $set: {
+                    name: updatedProduct.name,
+                    brand_name: updatedProduct.brand_name,
+                    img: updatedProduct.img,
+                    type: updatedProduct.type,
+                    price: updatedProduct.price,
+                    short_description: updatedProduct.short_description,
+                    rating_value: updatedProduct.rating_value,
                 }
             }
-            const result = await productCollection.updateOne({_id : new ObjectId(id)},updateDoc, { upsert: true })
+            const result = await productCollection.updateOne({ _id: new ObjectId(id) }, updateDoc, { upsert: true })
             res.send(result)
         })
         // add to cart by id
-        app.post('/cart',async(req,res)=>{
+        app.post('/cart', async (req, res) => {
             const cartItem = req.body
             const result = await cartCollection.insertOne(cartItem)
             res.send(result);
         })
         // get the cart 
-        app.get('/cart',async(req,res)=>{
+        app.get('/cart', async (req, res) => {
             const result = await cartCollection.find().toArray()
+            res.send(result);
+        })
+
+        // delete item from cart
+        app.delete('/cart/:id', async (req, res) => {
+            const id = req.params.id
+            const result = await cartCollection.deleteOne({ _id: new ObjectId(id)});
             res.send(result);
         })
 
