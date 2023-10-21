@@ -31,6 +31,7 @@ async function run() {
         const database = client.db('tech_land_DB')
         const brandCollection = database.collection('brands')
         const productCollection = database.collection('products')
+        const cartCollection = database.collection('cart')
 
        
         // All Brand Api 
@@ -84,6 +85,17 @@ async function run() {
             }
             const result = await productCollection.updateOne({_id : new ObjectId(id)},updateDoc, { upsert: true })
             res.send(result)
+        })
+        // add to cart by id
+        app.post('/cart',async(req,res)=>{
+            const cartItem = req.body
+            const result = await cartCollection.insertOne(cartItem)
+            res.send(result);
+        })
+        // get the cart 
+        app.get('/cart',async(req,res)=>{
+            const result = await cartCollection.find().toArray()
+            res.send(result);
         })
 
 
