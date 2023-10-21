@@ -60,6 +60,32 @@ async function run() {
             res.send(cursor)
         })
 
+        // Add product api
+        app.post('/product', async(req,res)=>{
+            const product = req.body 
+            const result = await productCollection.insertOne(product)
+            res.send(result)
+        })
+
+        // Update product api
+        app.put('/productid/:id',async(req,res)=>{
+            const id = req.params.id
+            const updatedProduct = req.body
+            const updateDoc = {
+                $set:{
+                    name:updatedProduct.name,
+                    brand_name:updatedProduct.brand_name,
+                    img:updatedProduct.img,
+                    type:updatedProduct.type,
+                    price:updatedProduct.price,
+                    short_description:updatedProduct.short_description,
+                    rating_value:updatedProduct.rating_value,
+                }
+            }
+            const result = await productCollection.updateOne({_id : new ObjectId(id)},updateDoc, { upsert: true })
+            res.send(result)
+        })
+
 
 
         // Send a ping to confirm a successful connection
